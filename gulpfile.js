@@ -52,7 +52,7 @@ gulp.task('watch', function() {
 gulp.task('useref', function() {
 
   return gulp.src('app/*.html')
-    .pipe(useref())
+    .pipe(useref({allowEmpty:true}))
     .pipe(gulpIf('*.js', uglify()))
     .pipe(gulpIf('*.css', cssnano()))
     .pipe(gulp.dest('dist'));
@@ -67,12 +67,6 @@ gulp.task('images', function() {
     })))
     .pipe(gulp.dest('dist/images'))
 });
-
-// Copying fonts 
-gulp.task('fonts', function() {
-  return gulp.src('app/fonts/**/*')
-    .pipe(gulp.dest('dist/fonts'))
-})
 
 //Sass documentation
 gulp.task('sassdoc', function () {
@@ -97,19 +91,14 @@ gulp.task('clean:dist', function() {
 //Performance budget
 gulp.task('louis', function() {
   louis({
-    timeout: 60,
+    timeout: 100,
     url: 'http://localhost:3000',
     performanceBudget: {
-      requests: 10,
-      headersSize: 8000,
+
       cssSize: 10000,
-      jsSize: 2000,
-      consoleMessages: 3,
+
       imageSize: 700000,
-      domContentLoaded: 2000,
-      smallestLatency: 1000,
-      medianLatency: 10,
-      slowestResponse: 1000,
+
       timeToFirstImage: 700
       
     }
@@ -129,7 +118,7 @@ gulp.task('build', function(callback) {
   runSequence(
     'clean:dist',
     'sass',
-    ['useref', 'images', 'fonts', 'sassdoc'],
+    ['useref', 'images', 'sassdoc'],
     callback
   )
 })
